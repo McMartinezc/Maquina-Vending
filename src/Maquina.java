@@ -1,11 +1,10 @@
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class Maquina {
 
    private ArrayList<Producte> llistaProductes;
-
-
     private String nomMaquina;
 
     public Maquina(String nomMaquina) {
@@ -75,16 +74,26 @@ public class Maquina {
 
     //Metode buscar per marca amb lambda e imprimeix el producte trobat
     public void producteMarca(String marcaProducte){
-        Stream<Producte> producteStream = llistaProductes.stream()
+       /* Mostra productes de la mateixa marca
+       Stream<Producte> producteStream = llistaProductes.stream()
                 .filter(producte -> producte.getMarcaProducte().equalsIgnoreCase(marcaProducte));
-
-       // producteStream.findFirst().get();
-        producteStream.forEach(producte -> System.out.println(producte.toString()));
+        producteStream.forEach(producte -> System.out.println(producte.toString()));*/
+        Optional<Producte> producte = llistaProductes.stream()
+                        .filter(p -> p.getMarcaProducte().equalsIgnoreCase(marcaProducte)).findFirst();
+        if (producte.isEmpty()) {
+            System.out.println("No hi ha productes d'aquesta marca");
+        } else {
+            System.out.println(producte.get().toString());
+        }
 
     }
     //Mostra el numero de producte d'una marca concreta amb una lambda.
-
-
+    public void quantitatProducteMarca(String marcaProducte){
+        long quantitat = llistaProductes.stream()
+                .filter(productes -> productes.getMarcaProducte().equalsIgnoreCase(marcaProducte))
+                .count();
+        System.out.println("La quantitat de productes d'aquesta marca són: " +quantitat);
+    }
 
     //Metode total stock
     public int stockTotal(){

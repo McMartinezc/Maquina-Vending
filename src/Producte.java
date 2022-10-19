@@ -45,8 +45,8 @@ public class Producte {
     }
 
     //Metode obsolet
-    @SuppressWarnings("metode obsolet")
     @Deprecated
+    @SuppressWarnings("Metode obsolet")
     public double retornarPreu(){
         return this.preuProducte;
     }
