@@ -1,6 +1,7 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
-
+@SuppressWarnings("metode deprecated")
 public class App {
 
     public static void main(String[] args){
@@ -43,38 +44,72 @@ public class App {
                         break;
 
                     case 4: //Mostrar producte d'una màquina
-                        nomMaquina = introInfo("Introdueix nom de la maquina: ");
+                        nomMaquina = introInfo("Introdueix nom de la màquina: ");
                         indexMaquina = buscarMaquina(nomMaquina, llistaMaquines);
                         if(indexMaquina==-1){
                             System.out.println("Màquina no existeix");
                         }else {
-                            marcaProducte = introInfo("Introdueix marca que vols buscar en el carro: ");
+                            marcaProducte = introInfo("Introdueix marca que vols buscar en la màquina: ");
                             llistaMaquines.get(indexMaquina).producteMarca(marcaProducte);
                         }
                         break;
 
                     case 5: //Mostrar stock d'un producte de la màquina
-                        nomMaquina = introInfo("Introdueix nom de la maquina: ");
+                        nomMaquina = introInfo("Introdueix nom de la màquina: ");
                         indexMaquina = buscarMaquina(nomMaquina, llistaMaquines);
                         if(indexMaquina==-1){
                             System.out.println("Màquina no existeix");
                         }else {
-                            marcaProducte = introInfo("Introdueix marca que vols buscar en el carro: ");
+                            marcaProducte = introInfo("Introdueix marca que vols buscar de la màquina: ");
                             llistaMaquines.get(indexMaquina).quantitatProducteMarca(marcaProducte);
                         }
                         break;
                     case 6: //Metode obsolet
-                        nomMaquina = introInfo("Introdueix nom de la maquina: ");
+                        nomMaquina = introInfo("Introdueix nom de la màquina: ");
                         indexMaquina = buscarMaquina(nomMaquina, llistaMaquines);
                         llistaMaquines.get(indexMaquina).getLlistaProductes().get(1).retornarPreu();
                         break;
                     case 7: //Metode mostra total de stock
                         mostrarStockTotal(llistaMaquines);
                         break;
+                    case 8: //Metode crear en un arxiu
+                        nomMaquina = introInfo("Introdueix nom de la màquina: ");
+                        indexMaquina = buscarMaquina(nomMaquina, llistaMaquines);
+                        Maquina maquina = llistaMaquines.get(indexMaquina);
+                        crearArxiu(maquina);
+                        break;
                 }
             }
         } while (opcions != 1);
 
+    }
+    //Metodo crear arxiu
+    static void crearArxiu (Maquina maquina) {
+
+        final String CSV_SEPARATOR = ",";
+        {
+            try {
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("productes.csv"), "UTF-8"));
+                for (Producte producte : maquina.getLlistaProductes()) {
+                    StringBuffer oneLine = new StringBuffer();
+                    oneLine.append(producte.getNomProducte().trim().length() == 0 ? "" : producte.getNomProducte());
+                    oneLine.append(CSV_SEPARATOR);
+                    oneLine.append(producte.getMarcaProducte().trim().length() == 0 ? "" : producte.getMarcaProducte());
+                    oneLine.append(CSV_SEPARATOR);
+                    oneLine.append(producte.getPreuProducte() < 0 ? "" : producte.getPreuProducte());
+                    oneLine.append(CSV_SEPARATOR);
+                    oneLine.append(producte.getStock() < 0 ? "" : producte.getStock());
+                    oneLine.append(CSV_SEPARATOR);
+                    bw.write(oneLine.toString());
+                    bw.newLine();
+                }
+                bw.flush();
+                bw.close();
+            } catch (UnsupportedEncodingException e) {
+            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
+            }
+        }
     }
     //Metode mostrar stock total
     static void mostrarStockTotal(ArrayList<Maquina> llistaMaquines){
@@ -112,18 +147,17 @@ public class App {
     }
     //Metode modificar stock
     static void modificarStock (int indexMaquina, ArrayList<Maquina> llistaMaquines) {
-        int quantitatProducte, indexProducte;
-        double preuProducte;
+        int  indexProducte;
         String nomProducte, marcaProducte;
 
         nomProducte = introInfo("Introdueix nom del producte: ");
-
+        marcaProducte = introInfo("Introdueix marca del producte: ");
         //Comprovem que el producte existeix a la màquina
-        indexProducte = llistaMaquines.get(indexMaquina).buscarProducte(nomProducte);
+        indexProducte = llistaMaquines.get(indexMaquina).buscarProducte(nomProducte,marcaProducte);
 
         if(indexProducte!=-1){ // si el producte existeix introduïm producte
                 //Comprovem stock producte
-                llistaMaquines.get(indexMaquina).controlStock(nomProducte);
+                llistaMaquines.get(indexMaquina).controlStock(nomProducte, marcaProducte);
         }else{
             System.out.println("Sha de crear un nou producte en aquesta màquina");
         }
@@ -151,12 +185,13 @@ public class App {
     //Metode menu info entrada
     static int menuEntrada() {
         int opcions = introInfoInt("Escull:\n1.Sortir de l'aplicació"
-                + "\n2.Afegir producte a l'estock"
+                + "\n2.Afegir producte a l'estoc"
                 + "\n3.Mostrar productes d'una màquina"
-                + "\n4.Mostrar marca d'un producte d'una màquina"
-                + "\n5.Mostrar stock d'un producte de la màquina"
+                + "\n4.Mostrar primera marca d'un producte d'una màquina"
+                + "\n5.Mostrar quantitat de productes d'una marca que hi ha en una màquina"
                 + "\n6.Metode obsolet"
-                + "\n7.Metode mostrar total de stock de les màquines"
+                + "\n7.Metode mostrar total de stock de totes les màquines"
+                + "\n8.Crear un arxiu"
         );
         return opcions;
     }

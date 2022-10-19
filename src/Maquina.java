@@ -6,6 +6,7 @@ public class Maquina {
 
    private ArrayList<Producte> llistaProductes;
     private String nomMaquina;
+    private final int MAX_STOCK = 10;
 
     public Maquina(String nomMaquina) {
         this.nomMaquina = nomMaquina;
@@ -33,34 +34,34 @@ public class Maquina {
     }
 
     //Metode control stock de producte d'una màquina
-    public void controlStock(String nomProducte){
+    public void controlStock(String nomProducte, String marcaProducte){
         int indexProducte=-1, i=0;
         int stock, stockInicial, stockFinal;
 
-        indexProducte = buscarProducte(nomProducte);
+        indexProducte = buscarProducte(nomProducte, marcaProducte);
 
             //Si existeix comprovem stock i el modifiquem
-            if (llistaProductes.get(indexProducte).getStock() < 10) {
+            if (llistaProductes.get(indexProducte).getStock() < MAX_STOCK) {
                 stockInicial = llistaProductes.get(indexProducte).getStock();
-                System.out.println("Stock actual de " + nomProducte + " " + stockInicial);
-                stock = 10 - llistaProductes.get(indexProducte).getStock();
-                System.out.println("Necessites omplir l'estock del producte: " + stock);
-                stockFinal= stock + stockInicial;
+                System.out.println("Estoc actual de " + nomProducte + " " + stockInicial);
+                stock = MAX_STOCK - llistaProductes.get(indexProducte).getStock();
+                System.out.println("Necessites omplir l'estoc del producte: " + stock);
+                stockFinal = stock + stockInicial;
                 llistaProductes.get(indexProducte).setStock(stockFinal);
-                System.out.println("Stock del producte actualitzat " +llistaProductes.get(indexProducte).getStock());
-            } else if(llistaProductes.get(indexProducte).getStock()==10){ //Si el stock està ple no fem res
-                System.out.println("Stock ple. Màxim 10 productes");
+                System.out.println("Estoc del producte actualitzat " + llistaProductes.get(indexProducte).getStock());
+            } else if (llistaProductes.get(indexProducte).getStock() == MAX_STOCK) { //Si el stock està ple no fem res
+                System.out.println("Estoc ple. Màxim " +MAX_STOCK+ " productes");
             }
-
     }
+
     //Metode buscar producte
-    public int buscarProducte(String nomProducte){
+    public int buscarProducte(String nomProducte, String marcaProducte){
         int indexProducte =-1;
         int i =0;
         boolean encontrado = false;
 
         while((i < llistaProductes.size()) && (encontrado == false)){
-            if (llistaProductes.get(i).getNomProducte().equalsIgnoreCase(nomProducte)){
+            if (llistaProductes.get(i).getNomProducte().equalsIgnoreCase(nomProducte) && marcaProducte.equalsIgnoreCase(llistaProductes.get(i).getMarcaProducte())){
                 indexProducte = i;
                 encontrado = true;
             }
@@ -78,12 +79,12 @@ public class Maquina {
        Stream<Producte> producteStream = llistaProductes.stream()
                 .filter(producte -> producte.getMarcaProducte().equalsIgnoreCase(marcaProducte));
         producteStream.forEach(producte -> System.out.println(producte.toString()));*/
-        Optional<Producte> producte = llistaProductes.stream()
-                        .filter(p -> p.getMarcaProducte().equalsIgnoreCase(marcaProducte)).findFirst();
-        if (producte.isEmpty()) {
+        Optional<Producte> producteOptional = llistaProductes.stream()
+                        .filter(producte -> producte.getMarcaProducte().equalsIgnoreCase(marcaProducte)).findFirst();
+        if (producteOptional.isEmpty()) {
             System.out.println("No hi ha productes d'aquesta marca");
         } else {
-            System.out.println(producte.get().toString());
+            System.out.println(producteOptional.get().toString());
         }
 
     }
