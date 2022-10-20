@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 @SuppressWarnings("metode deprecated")
 public class App {
@@ -73,10 +74,11 @@ public class App {
                         mostrarStockTotal(llistaMaquines);
                         break;
                     case 8: //Metode crear en un arxiu
-                        nomMaquina = introInfo("Introdueix nom de la màquina: ");
+                        crearArxiu(llistaMaquines);
+                        nomMaquina = introInfo("Introdueix nom de la màquina que vols crear l'arxiu: ");
                         indexMaquina = buscarMaquina(nomMaquina, llistaMaquines);
                         Maquina maquina = llistaMaquines.get(indexMaquina);
-                        crearArxiu(maquina);
+                        crearArxiuMaquina(maquina);
                         break;
                 }
             }
@@ -84,7 +86,22 @@ public class App {
 
     }
     //Metodo crear arxiu
-    static void crearArxiu (Maquina maquina) {
+    static void crearArxiu (ArrayList<Maquina> llistaMaquines) {
+
+        try{
+            FileWriter file = new FileWriter("maquines.csv");
+            PrintWriter printWriter = new PrintWriter(file);
+
+            for (int i = 0; i < llistaMaquines.size(); i++) {
+             printWriter.println(llistaMaquines.get(i).toString());
+            }
+            printWriter.close();
+        }catch (Exception error ){
+
+        }
+    }
+    //Metodo crear arxiu
+    static void crearArxiuMaquina (Maquina maquina) {
 
         final String CSV_SEPARATOR = ",";
         {
@@ -113,7 +130,7 @@ public class App {
     }
     //Metode mostrar stock total
     static void mostrarStockTotal(ArrayList<Maquina> llistaMaquines){
-       int total=0;
+        int total=0;
         for (int i=0; i<llistaMaquines.size(); i++){
             total += llistaMaquines.get(i).stockTotal();
         }
@@ -156,8 +173,8 @@ public class App {
         indexProducte = llistaMaquines.get(indexMaquina).buscarProducte(nomProducte,marcaProducte);
 
         if(indexProducte!=-1){ // si el producte existeix introduïm producte
-                //Comprovem stock producte
-                llistaMaquines.get(indexMaquina).controlStock(nomProducte, marcaProducte);
+            //Comprovem stock producte
+            llistaMaquines.get(indexMaquina).controlStock(nomProducte, marcaProducte);
         }else{
             System.out.println("Sha de crear un nou producte en aquesta màquina");
         }

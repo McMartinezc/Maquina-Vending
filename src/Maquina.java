@@ -106,4 +106,12 @@ public class Maquina {
         return stockTotal;
     }
 
+    @Override
+    public String toString() {
+        return "Maquina{" +
+                "llistaProductes=" + llistaProductes +
+                ", nomMaquina='" + nomMaquina + '\'' +
+                ", MAX_STOCK=" + MAX_STOCK +
+                '}';
+    }
 }
